@@ -253,11 +253,13 @@ class SsdUtil(StorageCommon):
                     pass
             else:
                 health_raw = NOT_AVAILABLE
+                # The ID of "Remaining Life Left" attribute on 'VSFDM8XC240G-V11-T' 
+                # and 'Virtium VTSM24ABXI160-BM110006' device is 231
+                # However, it is not recognized by SmartCmd nor smartctl so far
+                # We need to parse them using the ID number
+                special_ssd = ['VSFDM8XC240G-V11-T', 'Virtium VTSM24ABXI160-BM110006']
                 try:
-                    if self.model == 'VSFDM8XC240G-V11-T':
-                        # The ID of "Remaining Life Left" attribute on 'VSFDM8XC240G-V11-T' device is 231
-                        # However, it is not recognized by SmartCmd nor smartctl so far
-                        # We need to parse it using the ID number
+                    if self.model in special_ssd:
                         health_raw = self.parse_id_number(VIRTIUM_HEALTH_ID, self.vendor_ssd_info)
                         self.health = float(health_raw.split()[2]) if health_raw != NOT_AVAILABLE else NOT_AVAILABLE
                     else:
